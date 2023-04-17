@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="Mobile.js"></script>
+</head>
+<body>
+<style>
+    .chat-box {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        margin: 20px;
+    }
+
+    .chat {
+        display: flex;
+        justify-content: center;
+        margin: 10px;
+
+    }
+
+</style>
+<div class="chat-box">
+    <div class="chat">
+        <textarea disabled  id="chat-1"></textarea>
+        <button id="get-1" onclick="onOffMobile(this.id)">OFF</button>
+        <button id="battery-1"></button>
+        <button id="chargeBatterySS" onclick="increaseBatterySamSung()">Charge Battery</button>
+    </div>
+</div>
+
+<div class="chat-box">
+    <div class="chat">
+        <textarea disabled  id="chat-2"></textarea>
+        <button id="get-2" onclick="onOffMobile(this.id)">OFF</button>
+        <button id="battery-2"></button>
+        <button id="chargeBatteryIP" onclick="increaseBatteryIphone()">Charge Battery</button>
+    </div>
+</div>
+<script>
+    let samsung = new Mobile(false,10)
+    let iphone = new Mobile(false,10)
+function onOffMobile(id) {
+    if ( id === 'get-1') {
+        samsung.setStatus()
+        if (samsung.getStatus()){
+            downBattery()
+            document.getElementById('get-1').innerHTML = "ON"
+            document.getElementById('chat-1').style.backgroundColor = "#ccfff2"
+            document.getElementById('chat-1').disabled = false;
+
+        } else {
+            document.getElementById('get-1').innerHTML = "OFF"
+            document.getElementById('chat-1').style.backgroundColor = "#abbfb6"
+            document.getElementById('chat-1').disabled = true;
+            clearTimeout(myTimeOut1)
+
+        }
+    }else {
+        samsung.setStatus()
+        if (samsung.getStatus()){
+            downBatteryIP()
+            document.getElementById('get-2').innerHTML = "ON"
+            document.getElementById('chat-2').style.backgroundColor = "#ccfff2"
+            document.getElementById('chat-2').disabled = false;
+
+        } else {
+            document.getElementById('get-2').innerHTML = "OFF"
+            document.getElementById('chat-2').style.backgroundColor = "#abbfb6"
+            document.getElementById('chat-2').disabled = true;
+            clearTimeout(myTimeOut2)
+        }
+    }
+}
+function showBattery() {
+
+    document.getElementById('battery-1').innerHTML = samsung.getPin()+ "%"
+    document.getElementById('battery-2').innerHTML = iphone.getPin() + "%"
+}
+    showBattery()
+    let myTimeOut1;
+    let myTimeOut2;
+    function downBattery() {
+        myTimeOut1 = setTimeout(downBattery,1000);
+        if (samsung.getPin() <= 0){
+            clearTimeout(myTimeOut1)
+            document.getElementById('get-1').innerHTML = "OFF"
+            document.getElementById('chat-1').style.backgroundColor = "#363d55"
+            document.getElementById('get-1').disabled = true;
+            return;
+
+        }
+        samsung.setPin(samsung.getPin()-1)
+        document.getElementById('battery-1').innerHTML = samsung.getPin() + "%"
+
+
+    }
+    function downBatteryIP() {
+        let myTimeOut2 = setTimeout(downBatteryIP,1000);
+        if (iphone.getPin() <= 0){
+            clearTimeout(myTimeOut2)
+            document.getElementById('get-2').innerHTML = "OFF"
+            document.getElementById('chat-2').style.backgroundColor = "#363d55"
+            document.getElementById('get-1').disabled = true;
+            return;
+        }
+        iphone.setPin(iphone.getPin()-1)
+        document.getElementById('battery-2').innerHTML = iphone.getPin() + "%"
+    }
+    let increaseSamSung;
+    let increaseIphone;
+    function increaseBatterySamSung() {
+        if (samsung.getPin() >= 11) {
+            clearTimeout(increaseSamSung)
+        }
+        increaseSamSung=setTimeout(increaseBatterySamSung,1000);
+        samsung.setPin(samsung.getPin()+1)
+        document.getElementById('battery-1').innerHTML = samsung.getPin() + "%"
+    }
+    function increaseBatteryIphone() {
+        if (iphone.getPin() >= 11) {
+            clearTimeout(increaseIphone)
+        }
+        increaseIphone=setTimeout(increaseBatteryIphone,1000);
+        iphone.setPin(iphone.getPin()+1)
+        document.getElementById('battery-2').innerHTML = iphone.getPin() + "%"
+    }
+
+</script>
+</body>
+</html>
